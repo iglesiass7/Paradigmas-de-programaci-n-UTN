@@ -209,9 +209,6 @@ dueño(gandara, vacalín).
 empresas a cargo. Una empresa se considera a cargo de otra si es su dueña o es dueña de una empresa que la
 tiene a cargo.
 
-duenio(laSerenisima, gandara).
-duenio(gandara, vacalin).
-
 provee(Empresa, Productos) :-
     productoDe(Empresa, _),
     findall(Producto, productoDe(Empresa, Producto), Productos).
@@ -226,7 +223,10 @@ proveeLaEmpresa(Producto, Empresa) :-
 proveeLaEmpresa(Producto, Empresa) :-
     duenio(Empresa, Marca),
     proveeLaEmpresa(Producto, Marca).
+*/
 
+duenio(laSerenisima, gandara).
+duenio(gandara, vacalin).
 
 % Relación transitiva de a cargo
 
@@ -247,43 +247,5 @@ proveeLaEmpresa(Producto, Empresa) :-
 % Lista de productos que provee la empresa o sus subsidiarias
 
 provee(Empresa, Productos) :-
+    proveeLaEmpresa(_, Empresa),
     setof(Producto, proveeLaEmpresa(Producto, Empresa), Productos).
-
-
-
-*/
-
-% aCargo(Empresa, EmpresaACargo)
-aCargo(Empresa, EmpresaACargo) :-
-    dueño(Empresa, EmpresaACargo).
-
-aCargo(Empresa, EmpresaACargo) :-
-    dueño(Empresa, Intermedia),
-    aCargo(Intermedia, EmpresaACargo).
-
-% provee(Empresa, ListaProductos)
-provee(Empresa, ListaProductos) :-
-    % Obtener todas las empresas a cargo + la propia
-    findall(E,
-        (E = Empresa ; aCargo(Empresa, E)),
-        Empresas),
-    % Obtener productos de todas esas empresas
-    findall(Producto,
-        (
-            precioUnitario(Producto, _),
-            empresaProducto(Producto, Empresas)
-        ),
-        ProductosDuplicados),
-    % Eliminar duplicados
-    list_to_set(ProductosDuplicados, ListaProductos).
-
-% empresaProducto(Producto, ListaEmpresas)
-% Verdadero si Producto pertenece a alguna empresa en la lista
-empresaProducto(Producto, Empresas) :-
-    empresaDeProducto(Producto, Empresa),
-    member(Empresa, Empresas).
-
-% empresaDeProducto: extraer la empresa/marca de un producto
-empresaDeProducto(arroz(Marca), Marca).
-empresaDeProducto(lacteo(Marca, _), Marca).
-empresaDeProducto(salchichas(Marca, _), Marca).
