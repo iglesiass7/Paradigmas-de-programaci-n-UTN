@@ -21,15 +21,21 @@ precioDeJuego(Nombre, Precio):-
 precioDeJuego(Nombre, Precio):-
     juego(puzzle(Nombre, _, _), Precio).
 
-cuantoSale(Nombre,Valor):-
-    precioDeJuego(Nombre, Precio),
+cuantoSale(Nombre, Valor) :-
+    precioDeJuego(Nombre, PrecioBase),
     oferta(Nombre, Descuento),
-    Valor is Precio - (Precio * Descuento / 100),
-    Valor >= 0.
+    Valor is PrecioBase - (PrecioBase * Descuento / 100).
+% alternativa Valor is PrecioBase * (100 - Descuento) / 100
 
+/*
 cuantoSale(Nombre,Precio):-
     precioDeJuego(Nombre, Precio),
-    not(oferta(Nombre, Descuento)).
+    not(oferta(Nombre, Descuento)). no hay que instanciar descuento, no nos importa, solo quiero ver que con ese nombre no hay oferta
+*/
+
+cuantoSale(Nombre, PrecioBase) :-
+    precioDeJuego(Nombre, PrecioBase),
+    not(oferta(Nombre, _)). 
 
 juegoPopular(Nombre):-
     juego(accion(Nombre), _).
@@ -53,6 +59,7 @@ obtenerNombreDeAdquisicion(compra(Nombre),Nombre).
 
 adictoALosDescuentos(Usuario):-
     usuario(Usuario, _, Adquisiciones),
+    Adquisiciones \= [], % asegura que haya algo
     forall((member(Adquisicion, Adquisiciones),obtenerNombreDeAdquisicion(Adquisicion,Nombre)),
         tieneUnBuenDescuento(Nombre) ).
 
@@ -99,12 +106,19 @@ monotematico(Usuario,Genero):-
         member(Juego,Juegos), (esDeGenero(Juego,puzzle))
         ).
 */
+/*
+esta mal, usuario esta de mas las dos veces xq en leRegala ya lo usa, prestar atencion
 buenosAmigos(Usuario,OtroUsuario):-
     usuario(Usuario, _, _),
     usuario(OtroUsuario, _, _),
     leRegala(Usuario,OtroUsuario),
     leRegala(OtroUsuario,Usuario),
     Usuario \= OtroUsuario.
+*/
+buenosAmigos(Usuario,OtroUsuario) :-
+    Usuario \= OtroUsuario,
+    leRegala(Usuario,OtroUsuario),
+    leRegala(OtroUsuario,Usuario).
 
 leRegala(Usuario,OtroUsuario):-
     usuario(Usuario, _, Adquisiciones),
