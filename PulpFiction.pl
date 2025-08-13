@@ -272,8 +272,6 @@ participaEn(ayudar(Quien), Quien).
 participaEn(cuidar(Quien), Quien).
 participaEn(buscar(Quien, _), Quien).
 
-
-
 /*8. Ah, algo más: nuestros personajes tienen características. Lo cual es bueno, porque nos ayuda a diferenciarlos cuando están de a dos. Por ejemplo:
 
 caracteristicas(vincent,  [negro, muchoPelo, tieneCabeza]).
@@ -302,7 +300,7 @@ caracteristicas(marvin,   [negro]).
 duoDiferenciable(P1, P2) :-
     relacion(P1, P2),
     tienenCaracteristicasDistintas(P1,P2).
-    
+%como usa chat disyuncion
 tienenCaracteristicasDistintas(P1,P2):-
     caracteristicas(P1, C1),
     caracteristicas(P2, C2),
@@ -311,3 +309,30 @@ tienenCaracteristicasDistintas(P1,P2):-
         ;
         member(Car, C2), not(member(Car, C1))
     ).
+%como usamos nosotros la disyuncion
+tienenCaracteristicasDistintas(P1, P2) :-
+    caracteristicas(P1, C1),
+    caracteristicas(P2, C2),
+    member(Car, C1),
+    not(member(Car, C2)).
+
+tienenCaracteristicasDistintas(P1, P2) :-
+    caracteristicas(P1, C1),
+    caracteristicas(P2, C2),
+    member(Car, C2),
+    not(member(Car, C1)).
+
+/* version topo muy buena
+
+tienenCaracteristicasDistintas(P1, P2) :-
+    caracteristicas(P1, C1),
+    caracteristicas(P2, C2),
+    comprobarOrden(C1,C2).
+
+comprobarOrden(Lista1,Lista2):-
+    member(Elemento,Lista1),
+    not(member(Elemento,Lista2)).
+
+comprobarOrden(Lista1,Lista2):-
+    member(Elemento,Lista2),
+    not(member(Elemento,Lista1)).
