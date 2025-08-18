@@ -202,22 +202,12 @@ R = mufasa.
     not((persigue(OtroPersonaje,Rey),OtroPersonaje \= Personaje)),
     forall(personaje(Personaje1),adora(Personaje1,Rey)).
 */
-adora(Animal, Otro) :-
-    animal(Animal),
-    animal(Otro),
-    Animal \= Otro,
-    not(comio(Animal, Otro)),
-    not(persigue(Animal, Otro)).
-
 animal(Animal) :- peso(Animal,_).        % los que tienen un peso propio
-animal(Animal) :- persigue(Animal,_).    % los que persiguen
-animal(Animal) :- persigue(_,Animal).    % los que son perseguidos
+peso(mufasa, _).
 
-
-rey(Rey) :-
+rey(Rey):-
     animal(Rey),
-    findall(Perseguidor, persigue(Perseguidor, Rey), Perseguidores),
-    length(Perseguidores, 1),
-    forall(
-        (animal(Animal), Animal \= Rey), adora(Animal, Rey)
-    ).
+    not(comio(Rey,_)),
+    not(persigue(Rey,_)),
+    findall(Perseguidor,persigue(Perseguidor,Rey),LosQueLoPersiguen),
+    length(LosQueLoPersiguen, 1).
